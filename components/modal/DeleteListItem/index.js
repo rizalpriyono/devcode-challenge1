@@ -16,6 +16,7 @@ const ModalDeleteListItem = (props) => {
       );
 
       if (response) {
+        close();
         success();
       }
     } catch (err) {

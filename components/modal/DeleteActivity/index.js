@@ -16,6 +16,7 @@ const ModalDeleteActivity = (props) => {
       );
 
       if (response) {
+        close();
         success();
       }
     } catch (err) {

@@ -5,7 +5,6 @@ import {
   PlusIcon,
   ChevronLeftIcon,
   PencilIcon,
-  SwitchVerticalIcon,
 } from '@heroicons/react/outline';
 import Loader from '../../components/Loader';
 import Head from 'next/head';
@@ -13,19 +12,23 @@ import axios from 'axios';
 import CardListItem from '../../components/CardListItem';
 import ModalAddListItem from '../../components/modal/AddListItem';
 import Sorting from '../../components/Sorting';
+import ModalDeleteListItem from '../../components/modal/DeleteListItem';
 
 export default function DetailActivity(props) {
   const router = useRouter();
-  const { listTodoItem, nameActivity } = props;
-
-  const [processAdd, setProcessAdd] = useState(false);
-  const [openModalAdd, setOpenModalAdd] = useState(false);
-  const [listItem, setListItem] = useState([]);
-  const [editTitle, setEditTitle] = useState(false);
-  const [title, setTitle] = useState(nameActivity);
-
   const { id } = router.query;
 
+  const [processAdd, setProcessAdd] = useState(false);
+  const [openModalAdd, setOpenModalAdd] = useState({
+    open: false,
+    item: {},
+    status: '',
+  });
+  const [openDelete, setOpenDelete] = useState(false);
+  const [listItem, setListItem] = useState([]);
+  const [editTitle, setEditTitle] = useState(false);
+  const [title, setTitle] = useState('');
+  const [itemSelected, setItemSelected] = useState({});
   const handleClickEdit = () => {
     if (editTitle) {
       handleChangeTitle();
@@ -53,16 +56,16 @@ export default function DetailActivity(props) {
   const handleChangeSort = (value) => {
     switch (value) {
       case 'Terbaru':
-        setListItem([...listTodoItem]);
+        getData(id);
         break;
 
       case 'Terlama':
-        setListItem([...listTodoItem].reverse());
+        setListItem([...listItem].reverse());
         break;
 
       case 'A-Z':
         setListItem(
-          [...listTodoItem].sort((a, b) => {
+          [...listItem].sort((a, b) => {
             let textA = a.title.toUpperCase();
             let textB = b.title.toUpperCase();
             return textA < textB ? -1 : textA > textB ? 1 : 0;
@@ -72,7 +75,7 @@ export default function DetailActivity(props) {
 
       case 'Z-A':
         setListItem(
-          [...listTodoItem].sort((a, b) => {
+          [...listItem].sort((a, b) => {
             let textA = a.title.toUpperCase();
             let textB = b.title.toUpperCase();
             return textA > textB ? -1 : textA < textB ? 1 : 0;
@@ -81,9 +84,7 @@ export default function DetailActivity(props) {
         break;
 
       case 'Belum Selesai':
-        setListItem(
-          [...listTodoItem].sort((a, b) => b.is_active - a.is_active)
-        );
+        setListItem([...listItem].sort((a, b) => b.is_active - a.is_active));
         break;
 
       default:
@@ -91,9 +92,66 @@ export default function DetailActivity(props) {
     }
   };
 
+  const getData = async (idActivity) => {
+    try {
+      const response = await axios.get(
+        `https://todo.api.devcode.gethired.id/activity-groups/${idActivity}`
+      );
+      if (response) {
+        setTitle(response.data.title);
+        setListItem(response.data.todo_items);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleChangeActive = async (item) => {
+    const payload = {
+      ...item,
+      is_active: !item.is_active,
+    };
+    try {
+      const response = await axios.patch(
+        `https://todo.api.devcode.gethired.id/todo-items/${item.id}`,
+        payload
+      );
+      if (response) {
+        getData(id);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleSuccessAdd = () => {
+    getData(id);
+    handleCloseForm();
+  };
+
+  const handleCloseForm = () => {
+    setOpenModalAdd({
+      open: false,
+      item: {
+        activity_group_id: id,
+        title: '',
+        priority: 'very-high',
+      },
+      status: '',
+    });
+  };
+
+  const handleOpenForm = (status, item) => {
+    setOpenModalAdd({ item: item, status: status, open: true });
+  };
+
   useEffect(() => {
-    setListItem([...listTodoItem]);
-  }, [listTodoItem]);
+    const { id } = router.query;
+    if (id !== undefined) {
+      getData(id);
+    }
+  }, [id]);
+
   return (
     <>
       <Head>
@@ -143,7 +201,13 @@ export default function DetailActivity(props) {
                 className="flex justify-center w-48 py-4 px-8 rounded-full bg-sky-500 text-white items-center gap-3 font-semibold text-lg disabled:bg-sky-200"
                 data-cy="todo-add-button"
                 disabled={processAdd}
-                onClick={() => setOpenModalAdd(true)}
+                onClick={() =>
+                  handleOpenForm('add', {
+                    activity_group_id: id,
+                    title: '',
+                    priority: 'very-high',
+                  })
+                }
               >
                 {processAdd ? (
                   <Loader />
@@ -157,7 +221,7 @@ export default function DetailActivity(props) {
             </div>
           </header>
 
-          {listTodoItem.length === 0 ? (
+          {listItem.length === 0 ? (
             <div className="flex justify-center mt-10">
               <figure
                 data-cy="todo-empty-state"
@@ -171,7 +235,16 @@ export default function DetailActivity(props) {
             <div className="grid mt-16 gap-5">
               {listItem.map((item, i) => (
                 <div key={i}>
-                  <CardListItem item={item} index={i} />
+                  <CardListItem
+                    item={item}
+                    index={i}
+                    clickDelete={() => {
+                      setItemSelected(item);
+                      setOpenDelete(true);
+                    }}
+                    clickCheckbox={() => handleChangeActive(item)}
+                    clickEdit={() => handleOpenForm('edit', item)}
+                  />
                 </div>
               ))}
             </div>
@@ -180,28 +253,19 @@ export default function DetailActivity(props) {
       </main>
 
       <ModalAddListItem
-        open={openModalAdd}
-        close={() => setOpenModalAdd(false)}
-        item={{
-          activity_group_id: id,
-          title: '',
-          priority: 'very-high',
-        }}
-        status="add"
+        open={openModalAdd.open}
+        close={handleCloseForm}
+        item={openModalAdd.item}
+        status={openModalAdd.status}
+        success={handleSuccessAdd}
+      />
+
+      <ModalDeleteListItem
+        open={openDelete}
+        close={() => setOpenDelete(false)}
+        item={itemSelected}
+        success={() => getData(id)}
       />
     </>
   );
-}
-
-export async function getServerSideProps({ params }) {
-  const response = await axios.get(
-    `https://todo.api.devcode.gethired.id/activity-groups/${params.id}`
-  );
-  const res = response.data;
-  return {
-    props: {
-      nameActivity: res.title,
-      listTodoItem: res.todo_items,
-    },
-  };
 }

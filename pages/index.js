@@ -1,16 +1,19 @@
 import { PlusIcon } from '@heroicons/react/outline';
 import axios from 'axios';
-import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CardActivity from '../components/CardActivity';
 import Head from 'next/head';
 import Header from '../components/Header';
 import Loader from '../components/Loader';
+import ModalDeleteActivity from '../components/modal/DeleteActivity';
+import ModalInformation from '../components/modal/Information';
 
 export default function Home(props) {
-  const router = useRouter();
-  const { dataActivy } = props;
   const [processAdd, setProcessAdd] = useState(false);
+  const [dataActivity, setDataActivity] = useState([]);
+  const [activitySelect, setActivitySelect] = useState({});
+  const [modalDelete, setModalDelete] = useState(false);
+  const [modalInfo, setModalInfo] = useState(false);
 
   const handleAddNewActivity = async () => {
     const payload = {
@@ -24,14 +27,41 @@ export default function Home(props) {
         payload
       );
 
-      if (response.data) {
-        router.replace(router.asPath);
+      if (response) {
+        getData();
       }
     } catch (err) {
       console.log(err);
     }
     setProcessAdd(false);
   };
+
+  const getData = async () => {
+    try {
+      const res = await axios.get(
+        'https://todo.api.devcode.gethired.id/activity-groups?email=rizal%40skyshi.io'
+      );
+      if (res) {
+        setDataActivity(res.data.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleSelect = (item) => {
+    setActivitySelect(item);
+    setModalDelete(true);
+  };
+
+  const handleSuccessDelete = () => {
+    getData();
+    setModalInfo(true);
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <>
@@ -63,7 +93,7 @@ export default function Home(props) {
             </button>
           </header>
 
-          {dataActivy.length === 0 ? (
+          {dataActivity.length === 0 ? (
             <div className="flex justify-center mt-10 ">
               <figure
                 data-cy="activity-empty-state"
@@ -79,31 +109,35 @@ export default function Home(props) {
             </div>
           ) : (
             <div className="grid grid-cols-4 gap-6 mt-16">
-              {dataActivy.map((item, i) => {
+              {dataActivity.map((item, i) => {
                 const date = new Date(item.created_at);
+                const month = date.toLocaleString('id', { month: 'long' });
 
+                const newFormat = `${date.getDate()} ${month} ${date.getFullYear()}`;
                 return (
                   <div key={i}>
-                    <CardActivity item={item} index={i} date={date} />
+                    <CardActivity
+                      item={item}
+                      index={i}
+                      date={newFormat}
+                      selectItem={() => handleSelect(item)}
+                    />
                   </div>
                 );
               })}
             </div>
           )}
         </section>
+
+        <ModalDeleteActivity
+          open={modalDelete}
+          close={() => setModalDelete(false)}
+          item={activitySelect}
+          success={handleSuccessDelete}
+        />
+
+        <ModalInformation open={modalInfo} close={() => setModalInfo(false)} />
       </main>
     </>
   );
-}
-
-export async function getServerSideProps() {
-  const res = await axios.get(
-    'https://todo.api.devcode.gethired.id/activity-groups?email=rizal%40skyshi.io'
-  );
-  const dataActivy = res.data;
-  return {
-    props: {
-      dataActivy: dataActivy.data,
-    },
-  };
 }

@@ -1,25 +1,10 @@
 import { useRouter } from 'next/router';
 import { TrashIcon } from '@heroicons/react/outline';
-import { Fragment, useState } from 'react';
-import ModalDeleteActivity from '../modal/DeleteActivity';
-import ModalInformation from '../modal/Information';
 
 const CardActivity = (props) => {
   const router = useRouter();
-  const [openModal, setOpenModal] = useState(false);
-  const [openInfo, setOpenInfo] = useState(false);
-  let optionsDate = {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  };
 
-  const handleSuccessDelete = () => {
-    setOpenModal(false);
-    setOpenInfo(true);
-    router.replace(router.asPath);
-  };
-  const { index, item, date } = props;
+  const { index, item, date, selectItem } = props;
   return (
     <>
       <div
@@ -37,25 +22,13 @@ const CardActivity = (props) => {
 
         <div className="flex justify-between text-slate-400">
           <p className="text-lg font-medium" data-cy="activity-item-date">
-            {date.toLocaleDateString('en-US', optionsDate)}
+            {date}
           </p>
-          <button
-            data-cy="activity-item-delete-button"
-            onClick={() => setOpenModal(true)}
-          >
+          <button data-cy="activity-item-delete-button" onClick={selectItem}>
             <TrashIcon className="w-7" />
           </button>
         </div>
       </div>
-
-      <ModalDeleteActivity
-        open={openModal}
-        close={() => setOpenModal(false)}
-        item={item}
-        success={handleSuccessDelete}
-      />
-
-      {/* <ModalInformation open={openInfo} close={() => setOpenInfo(false)} /> */}
     </>
   );
 };

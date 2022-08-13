@@ -8,7 +8,7 @@ import DropdownPriority from '../../Dropdown';
 
 const ModalAddListItem = (props) => {
   const router = useRouter();
-  const { open, close, item, status } = props;
+  const { open, close, item, status, success } = props;
 
   const [payloadAdd, setPayloadAdd] = useState({});
   const [priority, setPriority] = useState('very-high');
@@ -48,13 +48,7 @@ const ModalAddListItem = (props) => {
       }
 
       if (response) {
-        close();
-        router.replace(router.asPath);
-        setPayloadAdd({
-          ...payloadAdd,
-          title: '',
-          priority: '',
-        });
+        success();
       }
     } catch (err) {
       console.log(err);

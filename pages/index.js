@@ -73,7 +73,7 @@ export default function Home(props) {
 
         <section className="max-w-7xl mx-auto p-10">
           <header className="flex justify-between items-center">
-            <h1 className="text-5xl font-bold" data-cy="activity-tittle">
+            <h1 className="text-5xl font-bold" data-cy="activity-title">
               Activity
             </h1>
             <button
@@ -118,7 +118,6 @@ export default function Home(props) {
                   <div key={i}>
                     <CardActivity
                       item={item}
-                      index={i}
                       date={newFormat}
                       selectItem={() => handleSelect(item)}
                     />

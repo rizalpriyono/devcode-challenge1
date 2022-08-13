@@ -4,12 +4,12 @@ import { TrashIcon } from '@heroicons/react/outline';
 const CardActivity = (props) => {
   const router = useRouter();
 
-  const { index, item, date, selectItem } = props;
+  const { item, date, selectItem } = props;
   return (
     <>
       <div
         className="bg-white rounded-xl p-8 h-64 shadow-lg flex flex-col "
-        data-cy={`activity-item-${index}`}
+        data-cy={`activity-item`}
       >
         <div
           onClick={() => router.push(`/detail/${item.id}`)}

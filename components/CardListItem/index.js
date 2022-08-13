@@ -7,7 +7,7 @@ import ModalDeleteListItem from '../modal/DeleteListItem';
 
 const CardListItem = (props) => {
   const router = useRouter();
-  const { item, index, clickDelete, clickCheckbox, clickEdit } = props;
+  const { item, clickDelete, clickCheckbox, clickEdit } = props;
 
   const [openEdit, setOpenEdit] = useState(false);
   const [itemSelect, setItemSelect] = useState({});
@@ -20,7 +20,7 @@ const CardListItem = (props) => {
     <>
       <div
         className="w-full p-8 bg-white rounded-xl shadow-lg flex items-center"
-        data-cy={`todo-item-${index}`}
+        data-cy={`todo-item`}
       >
         <input
           data-cy="todo-item-checkbox"

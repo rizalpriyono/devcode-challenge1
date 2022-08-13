@@ -27,6 +27,8 @@ const ModalDeleteListItem = (props) => {
   };
   return (
     <>
+      <div data-cy="modal-delete"></div>
+
       <Transition appear show={open} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={close}>
           <Transition.Child
@@ -52,38 +54,40 @@ const ModalDeleteListItem = (props) => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel
-                  data-cy="modal-delete"
-                  className="w-full max-w-md transform overflow-hidden rounded-3xl bg-white p-10 text-left align-middle shadow-xl transition-all"
-                >
-                  <ExclamationIcon
-                    data-cy="modal-delete-icon"
-                    className="text-red-500 w-16 mx-auto"
-                  />
-                  <h1
-                    data-cy="modal-delete-title"
-                    className="whitespace-pre-line text-center mt-5 font-medium"
+                <Dialog.Panel>
+                  <div
+                    data-cy="modal-delete"
+                    className="w-full max-w-md transform overflow-hidden rounded-3xl bg-white p-10 text-left align-middle shadow-xl transition-all"
                   >
-                    Apakah anda ingin menghapus List Item {'\n'}{' '}
-                    <b>{`"${item.title}"`}</b>?
-                  </h1>
+                    <ExclamationIcon
+                      data-cy="modal-delete-icon"
+                      className="text-red-500 w-16 mx-auto"
+                    />
+                    <h1
+                      data-cy="modal-delete-title"
+                      className="whitespace-pre-line text-center mt-5 font-medium"
+                    >
+                      Apakah anda ingin menghapus List Item {'\n'}{' '}
+                      <b>{`"${item.title}"`}</b>?
+                    </h1>
 
-                  <div className="flex justify-center mt-10 font-medium gap-8">
-                    <button
-                      data-cy="modal-delete-cancel-button"
-                      className="bg-slate-200 py-3 px-10 rounded-full w-32 flex justify-center"
-                      onClick={close}
-                    >
-                      Batal
-                    </button>
-                    <button
-                      data-cy="modal-delete-confirm-button"
-                      className="disabled:bg-red-300 bg-red-500 text-white py-3 px-10 rounded-full w-32 flex justify-center"
-                      onClick={handleClick}
-                      disabled={deleting}
-                    >
-                      {deleting ? <Loader /> : 'Hapus'}
-                    </button>
+                    <div className="flex justify-center mt-10 font-medium gap-8">
+                      <button
+                        data-cy="modal-delete-cancel-button"
+                        className="bg-slate-200 py-3 px-10 rounded-full w-32 flex justify-center"
+                        onClick={close}
+                      >
+                        Batal
+                      </button>
+                      <button
+                        data-cy="modal-delete-confirm-button"
+                        className="disabled:bg-red-300 bg-red-500 text-white py-3 px-10 rounded-full w-32 flex justify-center"
+                        onClick={handleClick}
+                        disabled={deleting}
+                      >
+                        {deleting ? <Loader /> : 'Hapus'}
+                      </button>
+                    </div>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

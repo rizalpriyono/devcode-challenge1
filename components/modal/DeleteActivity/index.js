@@ -42,7 +42,10 @@ const ModalDeleteActivity = (props) => {
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <div
+              className="flex min-h-full items-center justify-center p-4 text-center"
+              data-cy="modal-delete"
+            >
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"
@@ -52,10 +55,7 @@ const ModalDeleteActivity = (props) => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel
-                  data-cy="modal-delete"
-                  className="w-full max-w-md transform overflow-hidden rounded-3xl bg-white p-10 text-left align-middle shadow-xl transition-all"
-                >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-3xl bg-white p-10 text-left align-middle shadow-xl transition-all">
                   <ExclamationIcon
                     data-cy="modal-delete-icon"
                     className="text-red-500 w-16 mx-auto"

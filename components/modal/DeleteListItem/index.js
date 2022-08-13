@@ -27,8 +27,6 @@ const ModalDeleteListItem = (props) => {
   };
   return (
     <>
-      <div data-cy="modal-delete"></div>
-
       <Transition appear show={open} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={close}>
           <Transition.Child

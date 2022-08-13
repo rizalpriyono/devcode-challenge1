@@ -13,6 +13,7 @@ import CardListItem from '../../components/CardListItem';
 import ModalAddListItem from '../../components/modal/AddListItem';
 import Sorting from '../../components/Sorting';
 import ModalDeleteListItem from '../../components/modal/DeleteListItem';
+import ModalInformation from '../../components/modal/Information';
 
 export default function DetailActivity(props) {
   const router = useRouter();
@@ -25,6 +26,7 @@ export default function DetailActivity(props) {
     status: '',
   });
   const [openDelete, setOpenDelete] = useState(false);
+  const [modalInfo, setModalInfo] = useState(false);
   const [listItem, setListItem] = useState([]);
   const [editTitle, setEditTitle] = useState(false);
   const [title, setTitle] = useState('');
@@ -181,7 +183,11 @@ export default function DetailActivity(props) {
                   onBlur={handleChangeTitle}
                 />
               ) : (
-                <h1 className="text-3xl font-bold" data-cy="todo-title">
+                <h1
+                  className="text-3xl font-bold"
+                  data-cy="todo-title"
+                  onClick={handleClickEdit}
+                >
                   {title}
                 </h1>
               )}
@@ -270,8 +276,13 @@ export default function DetailActivity(props) {
         open={openDelete}
         close={() => setOpenDelete(false)}
         item={itemSelected}
-        success={() => getData(id)}
+        success={() => {
+          getData(id);
+          setModalInfo(true);
+        }}
       />
+
+      <ModalInformation open={modalInfo} close={() => setModalInfo(false)} />
     </>
   );
 }

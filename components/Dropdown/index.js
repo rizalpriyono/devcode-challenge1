@@ -54,7 +54,7 @@ const DropdownPriority = (props) => {
                 {priority.map((priority, priorityIdx) => (
                   <Listbox.Option
                     key={priorityIdx}
-                    data-cy={`modal-add-priority-${priority.datacy}`}
+                    data-cy={`modal-add-priority-item`}
                     className={({ active }) =>
                       `relative cursor-default select-none py-4 pl-4 pr-4 ${
                         active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'

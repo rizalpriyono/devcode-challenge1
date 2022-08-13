@@ -56,7 +56,7 @@ const ModalDeleteListItem = (props) => {
               >
                 <Dialog.Panel>
                   <div
-                    data-cy="modal-delete"
+                    data-cy="todo-modal-delete"
                     className="w-full max-w-md transform overflow-hidden rounded-3xl bg-white p-10 text-left align-middle shadow-xl transition-all"
                   >
                     <ExclamationIcon

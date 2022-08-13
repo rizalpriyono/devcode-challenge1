@@ -226,7 +226,13 @@ export default function DetailActivity(props) {
               <figure
                 data-cy="todo-empty-state"
                 className="cursor-pointer"
-                onClick={() => setOpenModalAdd(true)}
+                onClick={() =>
+                  handleOpenForm('add', {
+                    activity_group_id: id,
+                    title: '',
+                    priority: 'very-high',
+                  })
+                }
               >
                 <img src={'/img/todo-empty-state.svg'} alt="img-empty" />
               </figure>
